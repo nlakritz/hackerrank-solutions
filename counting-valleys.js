@@ -8,12 +8,14 @@ process.stdin.setEncoding('utf-8');
 let inputString = '';
 let currentLine = 0;
 
-process.stdin.on('data', function(inputStdin) {
+process.stdin.on('data', inputStdin => {
     inputString += inputStdin;
 });
 
-process.stdin.on('end', function() {
-    inputString = inputString.split('\n');
+process.stdin.on('end', _ => {
+    inputString = inputString.replace(/\s*$/, '')
+        .split('\n')
+        .map(str => str.replace(/\s*$/, ''));
 
     main();
 });
@@ -22,33 +24,35 @@ function readLine() {
     return inputString[currentLine++];
 }
 
-/*
- * Complete the 'gradingStudents' function below.
- *
- * The function is expected to return an INTEGER_ARRAY.
- * The function accepts INTEGER_ARRAY grades as parameter.
- */
-
-function gradingStudents(grades) {
-    // Write your code here
-
+// Complete the countingValleys function below.
+function countingValleys(n, s) {
+    let elevation = 0;
+    let valleys = 0;
+    for (let i = 0; i < n; i++) {
+        if (s.charAt(i) == 'D') {
+            elevation--;
+        }
+        else {
+            if (elevation == -1) {
+                valleys++;
+            }
+            elevation++;
+        }
+    }
+    return valleys;
 }
 
 function main() {
     const ws = fs.createWriteStream(process.env.OUTPUT_PATH);
 
-    const gradesCount = parseInt(readLine().trim(), 10);
+    const n = parseInt(readLine(), 10);
 
-    let grades = [];
+    const s = readLine();
 
-    for (let i = 0; i < gradesCount; i++) {
-        const gradesItem = parseInt(readLine().trim(), 10);
-        grades.push(gradesItem);
-    }
+    let result = countingValleys(n, s);
 
-    const result = gradingStudents(grades);
-
-    ws.write(result.join('\n') + '\n');
+    ws.write(result + "\n");
 
     ws.end();
 }
+
